@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FitzpatrickAdamPeriodTests2 {
 
-    // cm.cm.Period(int start, int end) Tests
+    // cm.Period(int start, int end) Tests
     @Test
     void startLessThanZero() {
         int start = -1;
