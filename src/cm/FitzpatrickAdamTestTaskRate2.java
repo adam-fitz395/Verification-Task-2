@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FitzpatrickAdamRateTests2 {
+public class FitzpatrickAdamTestTaskRate2 {
     @Test
     void validCarParkKind() {
         cm.CarParkKind kind = cm.CarParkKind.STAFF;
