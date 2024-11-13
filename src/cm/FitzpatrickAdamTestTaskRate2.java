@@ -45,6 +45,8 @@ public class FitzpatrickAdamTestTaskRate2 {
 
 
         Rate rate = new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate);
+
+        assertNotNull(rate, "ReducedPeriods should be valid");
     }
 
     @Test
@@ -64,6 +66,8 @@ public class FitzpatrickAdamTestTaskRate2 {
 
 
         Rate rate = new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate);
+
+        assertNotNull(rate, "NormalPeriods should be valid");
     }
 
     @Test
@@ -85,6 +89,8 @@ public class FitzpatrickAdamTestTaskRate2 {
 
 
         Rate rate = new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate);
+
+        assertNotNull(rate, "normalRate should be less than or equal to 10");
     }
 
     @Test
@@ -104,10 +110,12 @@ public class FitzpatrickAdamTestTaskRate2 {
 
 
         Rate rate = new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate);
+
+        assertNotNull(rate, "normalRate should be greater than or equal to 0");
     }
 
     @Test
-    void reducedRateGreaterThanEqualTen() {
+    void reducedRateLessThanEqualTen() {
         cm.CarParkKind kind = cm.CarParkKind.MANAGEMENT;
 
         ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
@@ -123,11 +131,11 @@ public class FitzpatrickAdamTestTaskRate2 {
 
         Rate rate = new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate);
 
-        assertNotNull(rate);
+        assertNotNull(rate, "reducedRate should be less than or equal to 10");
     }
 
     @Test
-    void reducedRateLessThanEqualZero() {
+    void reducedRateGreaterThanEqualZero() {
         cm.CarParkKind kind = cm.CarParkKind.STAFF;
 
         ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
@@ -143,6 +151,7 @@ public class FitzpatrickAdamTestTaskRate2 {
 
         Rate rate = new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate);
 
+        assertNotNull(rate, "reducedRate should be greater than or equal to 0");
 
     }
 
@@ -160,6 +169,8 @@ public class FitzpatrickAdamTestTaskRate2 {
         BigDecimal reducedRate = new BigDecimal(4);
 
         Rate rate = new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate);
+
+        assertNotNull(rate, "reducedRate should be less than normalRate");
     }
 
     @Test
@@ -402,6 +413,60 @@ public class FitzpatrickAdamTestTaskRate2 {
                 "normalPeriods should be null");
     }
 
+    @Test
+    void overlappingSeparatePeriods() {
+        cm.CarParkKind kind = cm.CarParkKind.STAFF;
+
+        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new cm.Period(2, 6));
+
+        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new cm.Period(5, 8));
+
+        BigDecimal normalRate = new BigDecimal(7);
+        BigDecimal reducedRate = new BigDecimal(4);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
+                "Overlapping periods between normal and reduced periods should throw an exception.");
+    }
+
+    @Test
+    void overlappingTwoPeriods() {
+        cm.CarParkKind kind = cm.CarParkKind.STUDENT;
+        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new cm.Period(1, 2));
+        reducedPeriods.add(new cm.Period(3, 4));
+        reducedPeriods.add(new cm.Period(5, 6));
+
+        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new cm.Period(2, 4));
+
+        BigDecimal normalRate = new BigDecimal(6);
+        BigDecimal reducedRate = new BigDecimal(3);
+        assertThrows(IllegalArgumentException.class,
+                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
+                "Overlapping periods between normal and reduced periods should throw an exception.");
+    }
+
+    @Test
+    void duplicatePeriods() {
+        cm.CarParkKind kind = cm.CarParkKind.STUDENT;
+        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new cm.Period(1, 2));
+        reducedPeriods.add(new cm.Period(1, 2));
+        reducedPeriods.add(new cm.Period(3, 4));
+
+        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new cm.Period(14, 15));
+
+        BigDecimal normalRate = new BigDecimal(9);
+        BigDecimal reducedRate = new BigDecimal(6);
+        assertThrows(IllegalArgumentException.class,
+                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
+                "Overlapping periods between normal and reduced periods should throw an exception.");
+    }
+
     // calculate(cm.cm.Period periodStay) Tests
     @Test
     void validStayPeriod() {
@@ -488,59 +553,5 @@ public class FitzpatrickAdamTestTaskRate2 {
         assertThrows(IllegalArgumentException.class,
                 () -> new Period(14, 12),
                 "stayPeriod should be invalid");
-    }
-
-    @Test
-    void overlappingSeparatePeriods() {
-        cm.CarParkKind kind = cm.CarParkKind.STAFF;
-
-        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
-        reducedPeriods.add(new cm.Period(2, 6));
-
-        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
-        normalPeriods.add(new cm.Period(5, 8));
-
-        BigDecimal normalRate = new BigDecimal(7);
-        BigDecimal reducedRate = new BigDecimal(4);
-
-        assertThrows(IllegalArgumentException.class,
-                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
-                "Overlapping periods between normal and reduced periods should throw an exception.");
-    }
-
-    @Test
-    void overlappingTwoPeriods() {
-        cm.CarParkKind kind = cm.CarParkKind.STUDENT;
-        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
-        reducedPeriods.add(new cm.Period(1, 2));
-        reducedPeriods.add(new cm.Period(3, 4));
-        reducedPeriods.add(new cm.Period(5, 6));
-
-        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
-        normalPeriods.add(new cm.Period(2, 4));
-
-        BigDecimal normalRate = new BigDecimal(7);
-        BigDecimal reducedRate = new BigDecimal(4);
-        assertThrows(IllegalArgumentException.class,
-                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
-                "Overlapping periods between normal and reduced periods should throw an exception.");
-    }
-
-    @Test
-    void duplicatePeriods() {
-        cm.CarParkKind kind = cm.CarParkKind.STUDENT;
-        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
-        reducedPeriods.add(new cm.Period(1, 2));
-        reducedPeriods.add(new cm.Period(1, 2));
-        reducedPeriods.add(new cm.Period(3, 4));
-
-        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
-        normalPeriods.add(new cm.Period(14, 15));
-
-        BigDecimal normalRate = new BigDecimal(7);
-        BigDecimal reducedRate = new BigDecimal(4);
-        assertThrows(IllegalArgumentException.class,
-                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
-                "Overlapping periods between normal and reduced periods should throw an exception.");
     }
 }
