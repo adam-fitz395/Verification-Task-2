@@ -491,7 +491,7 @@ public class FitzpatrickAdamTestTaskRate2 {
     }
 
     @Test
-    void overlappingPeriods() {
+    void overlappingSeparatePeriods() {
         cm.CarParkKind kind = cm.CarParkKind.STAFF;
 
         ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
@@ -503,6 +503,42 @@ public class FitzpatrickAdamTestTaskRate2 {
         BigDecimal normalRate = new BigDecimal(7);
         BigDecimal reducedRate = new BigDecimal(4);
 
+        assertThrows(IllegalArgumentException.class,
+                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
+                "Overlapping periods between normal and reduced periods should throw an exception.");
+    }
+
+    @Test
+    void overlappingTwoPeriods() {
+        cm.CarParkKind kind = cm.CarParkKind.STUDENT;
+        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new cm.Period(1, 2));
+        reducedPeriods.add(new cm.Period(3, 4));
+        reducedPeriods.add(new cm.Period(5, 6));
+
+        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new cm.Period(2, 4));
+
+        BigDecimal normalRate = new BigDecimal(7);
+        BigDecimal reducedRate = new BigDecimal(4);
+        assertThrows(IllegalArgumentException.class,
+                () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
+                "Overlapping periods between normal and reduced periods should throw an exception.");
+    }
+
+    @Test
+    void duplicatePeriods() {
+        cm.CarParkKind kind = cm.CarParkKind.STUDENT;
+        ArrayList<cm.Period> reducedPeriods = new ArrayList<>();
+        reducedPeriods.add(new cm.Period(1, 2));
+        reducedPeriods.add(new cm.Period(1, 2));
+        reducedPeriods.add(new cm.Period(3, 4));
+
+        ArrayList<cm.Period> normalPeriods = new ArrayList<>();
+        normalPeriods.add(new cm.Period(14, 15));
+
+        BigDecimal normalRate = new BigDecimal(7);
+        BigDecimal reducedRate = new BigDecimal(4);
         assertThrows(IllegalArgumentException.class,
                 () -> new Rate(kind, reducedPeriods, normalPeriods, normalRate, reducedRate),
                 "Overlapping periods between normal and reduced periods should throw an exception.");

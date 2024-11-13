@@ -54,7 +54,6 @@ public class FitzpatrickAdamTestTaskPeriod2 {
         int start = 8;
         int end = 12;
         Period period = new Period(start, end);
-        assertInstanceOf(cm.Period.class, period);
         assertNotNull(period, "Expected valid period creation for start=8, end=12");
     }
 
