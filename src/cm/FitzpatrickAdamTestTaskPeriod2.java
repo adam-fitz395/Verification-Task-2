@@ -49,6 +49,14 @@ public class FitzpatrickAdamTestTaskPeriod2 {
     }
 
     @Test
+    void startAndEndInvalid() {
+        int start = 26;
+        int end = 27;
+        assertThrows(IllegalArgumentException.class, () -> new cm.Period(start, end),
+                "start and end should be invalid");
+    }
+
+    @Test
     void validPeriod() {
         int start = 8;
         int end = 12;
